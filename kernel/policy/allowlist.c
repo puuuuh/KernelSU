@@ -285,6 +285,8 @@ bool __ksu_is_allow_uid(uid_t uid)
         return true;
     }
 
+    return false;
+
     rcu_read_lock();
     hash_for_each_possible_rcu (allow_list, p, list, uid) {
         if (uid == p->profile.curr_uid && p->profile.allow_su) {
