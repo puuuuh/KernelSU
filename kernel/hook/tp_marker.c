@@ -81,6 +81,7 @@ void ksu_mark_running_process_locked(void)
 {
     struct task_struct *p, *t;
     read_lock(&tasklist_lock);
+    pr_info("ksu_mark_running_process_locked: start\n");
     for_each_process_thread (p, t) {
         if (t->pid != 1 && !t->mm) {
             // skip kernel threads, but always allow pid 1
@@ -95,10 +96,8 @@ void ksu_mark_running_process_locked(void)
         bool is_init = t->pid == 1;
         if (ksu_root_process || is_zygote_process || is_shell || is_init || ksu_is_allow_uid(uid)) {
             ksu_set_task_tracepoint_flag(t);
-            pr_info("tp_marker: mark process: pid:%d, uid: %d, comm:%s\n", t->pid, uid, t->comm);
         } else {
             ksu_clear_task_tracepoint_flag(t);
-            pr_info("tp_marker: unmark process: pid:%d, uid: %d, comm:%s\n", t->pid, uid, t->comm);
         }
         put_cred(cred);
     }
@@ -155,9 +154,11 @@ int ksu_set_task_mark(pid_t pid, bool mark)
         get_task_struct(task);
         rcu_read_unlock();
         if (mark) {
+            pr_info("tp_marker: marked task\n");
             ksu_set_task_tracepoint_flag(task);
             pr_info("tp_marker: marked task pid=%d comm=%s\n", pid, task->comm);
         } else {
+            pr_info("tp_marker: unmarked task\n");
             ksu_clear_task_tracepoint_flag(task);
             pr_info("tp_marker: unmarked task pid=%d comm=%s\n", pid, task->comm);
         }

@@ -1,6 +1,7 @@
 alias bk := build_ksud
 alias bm := build_manager
 
+
 build_ksud:
     cross build --target aarch64-linux-android --release
 
