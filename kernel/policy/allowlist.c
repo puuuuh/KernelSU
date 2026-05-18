@@ -177,11 +177,12 @@ static void put_perm_data(struct perm_data *data)
 
 int ksu_set_app_profile(struct app_profile *profile)
 {
+    pr_err("ksu_set_app_profile: start!\n");
     struct perm_data *p, *np;
     int result = 0;
 
     if (!profile_valid(profile)) {
-        pr_err("Failed to set app profile: invalid profile!\n");
+        pr_err("ksu_set_app_profile: failed to set app profile: invalid profile!\n");
         return -EINVAL;
     }
 
@@ -198,6 +199,7 @@ int ksu_set_app_profile(struct app_profile *profile)
 
     // only allow default non root profile
     if (unlikely(profile->curr_uid == KSU_APP_PROFILE_PRESERVE_UID && strcmp(profile->key, "$") != 0)) {
+        pr_err("ksu_set_app_profile: invalid non-root profile!\n");
         return -EINVAL;
     }
 
@@ -212,6 +214,7 @@ int ksu_set_app_profile(struct app_profile *profile)
             // found it, just override it all!
             np = (struct perm_data *)kzalloc(sizeof(struct perm_data), GFP_KERNEL);
             if (!np) {
+                pr_err("no mem for override!\n");
                 result = -ENOMEM;
                 goto out_unlock;
             }
@@ -257,8 +260,9 @@ out:
         // set default non root profile
         default_non_root_profile.umount_modules = profile->nrp_config.profile.umount_modules;
     }
-
+    pr_err("ksu_set_app_profile: prev_out_unlock!\n");
 out_unlock:
+    pr_err("ksu_set_app_profile: out_unlock!\n");
     mutex_unlock(&allowlist_mutex);
     return result;
 }
