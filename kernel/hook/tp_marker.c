@@ -81,6 +81,7 @@ void ksu_mark_running_process_locked(void)
 {
     struct task_struct *p, *t;
     read_lock(&tasklist_lock);
+    pr_info("ksu_mark_running_process_locked: start\n");
     for_each_process_thread (p, t) {
         if (t->pid != 1 && !t->mm) {
             // skip kernel threads, but always allow pid 1
@@ -93,6 +94,7 @@ void ksu_mark_running_process_locked(void)
         bool is_shell = uid == 2000;
         // before boot completed, we shall mark init for marking zygote
         bool is_init = t->pid == 1;
+        pr_info("ksu_mark_running_process_locked: pre mark\n");
         if (ksu_root_process || is_zygote_process || is_shell || is_init || ksu_is_allow_uid(uid)) {
             pr_info("tp_marker: marked task\n");
             ksu_set_task_tracepoint_flag(t);
@@ -102,8 +104,10 @@ void ksu_mark_running_process_locked(void)
             ksu_clear_task_tracepoint_flag(t);
             pr_info("tp_marker: unmark process: pid:%d, uid: %d, comm:%s\n", t->pid, uid, t->comm);
         }
+        pr_info("ksu_mark_running_process_locked: post mark\n");
         put_cred(cred);
     }
+    pr_info("ksu_mark_running_process_locked: end\n");
     read_unlock(&tasklist_lock);
 }
 
