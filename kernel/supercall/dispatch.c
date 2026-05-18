@@ -325,6 +325,7 @@ static int do_get_app_profile(void __user *arg)
 
 static int do_set_app_profile(void __user *arg)
 {
+    pr_err("set_app_profile: start\n");
 #ifdef CONFIG_KSU_DISABLE_POLICY
     pr_err("set_app_profile: policy disabled\n");
     return -EOPNOTSUPP;
@@ -340,7 +341,7 @@ static int do_set_app_profile(void __user *arg)
 
     ret = ksu_set_app_profile(&cmd.profile);
     if (!ret) {
-        pr_err("set_app_profile: failed to set app profile\n");
+        pr_err("set_app_profile: failed to set app profile, reset all\n");
         ksu_persistent_allow_list();
         ksu_mark_running_process();
     }
