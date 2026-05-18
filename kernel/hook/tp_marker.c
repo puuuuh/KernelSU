@@ -89,11 +89,8 @@ void ksu_mark_running_process_locked(void)
         }
         pr_info("ksu_mark_running_process_locked: task_uid\n");
         int uid = task_uid(t).val;
-        pr_info("ksu_mark_running_process_locked: get_task_cred\n");
         const struct cred *cred = get_task_cred(t);
-        pr_info("ksu_mark_running_process_locked: ksu_root_process\n");
         bool ksu_root_process = uid == 0 && is_task_ksu_domain(cred);
-        pr_info("ksu_mark_running_process_locked: is_zygote_process\n");
         bool is_zygote_process = is_zygote(cred);
         pr_info("ksu_mark_running_process_locked: is_shell\n");
         bool is_shell = uid == 2000;
@@ -101,13 +98,9 @@ void ksu_mark_running_process_locked(void)
         bool is_init = t->pid == 1;
         pr_info("ksu_mark_running_process_locked: pre mark\n");
         if (ksu_root_process || is_zygote_process || is_shell || is_init || ksu_is_allow_uid(uid)) {
-            pr_info("tp_marker: marked task\n");
             ksu_set_task_tracepoint_flag(t);
-            pr_info("tp_marker: mark process: pid:%d, uid: %d, comm:%s\n", t->pid, uid, t->comm);
         } else {
-            pr_info("tp_marker: unmarked task\n");
             ksu_clear_task_tracepoint_flag(t);
-            pr_info("tp_marker: unmark process: pid:%d, uid: %d, comm:%s\n", t->pid, uid, t->comm);
         }
         pr_info("ksu_mark_running_process_locked: post mark\n");
         put_cred(cred);
