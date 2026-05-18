@@ -87,10 +87,15 @@ void ksu_mark_running_process_locked(void)
             // skip kernel threads, but always allow pid 1
             continue;
         }
+        pr_info("ksu_mark_running_process_locked: task_uid\n");
         int uid = task_uid(t).val;
+        pr_info("ksu_mark_running_process_locked: get_task_cred\n");
         const struct cred *cred = get_task_cred(t);
+        pr_info("ksu_mark_running_process_locked: ksu_root_process\n");
         bool ksu_root_process = uid == 0 && is_task_ksu_domain(cred);
+        pr_info("ksu_mark_running_process_locked: is_zygote_process\n");
         bool is_zygote_process = is_zygote(cred);
+        pr_info("ksu_mark_running_process_locked: is_shell\n");
         bool is_shell = uid == 2000;
         // before boot completed, we shall mark init for marking zygote
         bool is_init = t->pid == 1;
