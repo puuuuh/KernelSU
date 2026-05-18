@@ -155,9 +155,11 @@ int ksu_set_task_mark(pid_t pid, bool mark)
         get_task_struct(task);
         rcu_read_unlock();
         if (mark) {
+            pr_info("tp_marker: marked task\n");
             ksu_set_task_tracepoint_flag(task);
             pr_info("tp_marker: marked task pid=%d comm=%s\n", pid, task->comm);
         } else {
+            pr_info("tp_marker: unmarked task\n");
             ksu_clear_task_tracepoint_flag(task);
             pr_info("tp_marker: unmarked task pid=%d comm=%s\n", pid, task->comm);
         }
